@@ -53,3 +53,22 @@ class LearnedScale(keras.layers.Layer):
             "input_dim": self.input_dim
         })
         return config
+#--------------------------------------------------------------
+nll_tracker = tf.keras.metrics.Mean(name="nll")
+reg_term_tracker = tf.keras.metrics.Mean(name="reg_term")
+
+def track_loss_values(nll, weighted_reg_term):
+    nll_tracker.update_state(nll)
+    reg_term_tracker.update_state(weighted_reg_term)
+
+def reset_loss_trackers():
+    nll_tracker.reset_states()
+    reg_term_tracker.reset_states()
+
+def get_loss_metrics():
+    return {
+        'nll': float(nll_tracker.result().numpy()),
+        'reg_term': float(reg_term_tracker.result().numpy())
+    }
+
+#--------------------------------------------------------------
